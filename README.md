@@ -24,7 +24,8 @@ it in a development environment, run:
 
     # Install some build requirements via your system's package manager
     sudo apt-get install virtualenv git python3-dev g++ gfortran \
-                         libblas-dev liblapack-dev libatlas-base-dev
+                         libblas-dev liblapack-dev libatlas-base-dev \
+                         libssl-dev libffi-dev  # ...
 
     # Also install Qt dependencies for the GUI
     sudo apt-get install python3-pyqt4
