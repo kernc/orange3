@@ -4,11 +4,11 @@ set -o pipefail
 set -o errexit
 
 # Ensure new images have indexed palettes
-prev_commit=$(git show --pretty=raw HEAD | awk '/^parent /{ print $2; exit }')
-images="$(git diff --name-only HEAD $prev_commit |
-          grep '/doc/' | grep -iE "\.(png|jpg)$" || true )"
+images="$(git diff --name-only origin/master..HEAD |
+          grep -E '\bdoc/' | grep -iE '\.(png|jpg)$' || true )"
 echo -e "Checking if images are indexed:\n$images"
 while read image; do
+    [ "$image" ] || break;
     if identify -verbose "$image" | grep -q '^ *Type: TrueColor'; then
         echo "Error: image '$image' is true color" >&2
         not_ok=1
