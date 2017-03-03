@@ -102,18 +102,15 @@ if HAVE_WEBENGINE:
                              **kwargs)
             self.bridge = bridge
             self.debug = debug
-            with open(_WEBVIEW_HELPERS, encoding="utf-8") as f:
-                self._onloadJS(f.read(),
-                               name='webview_helpers',
-                               injection_point=QWebEngineScript.DocumentCreation)
 
             qtwebchannel_js = QFile("://qtwebchannel/qwebchannel.js")
             if qtwebchannel_js.open(QFile.ReadOnly):
-                source = bytes(qtwebchannel_js.readAll()).decode("utf-8")
+                with open(_WEBVIEW_HELPERS, encoding="utf-8") as f:
+                    source = f.read()
+                source += bytes(qtwebchannel_js.readAll()).decode("utf-8")
                 with open(_WEBENGINE_INIT_WEBCHANNEL, encoding="utf-8") as f:
-                    init_webchannel_src = f.read()
-                self._onloadJS(source + init_webchannel_src %
-                               dict(exposeObject_prefix=self._EXPOSED_OBJ_PREFIX),
+                    source += f.read()
+                self._onloadJS(source % dict(exposeObject_prefix=self._EXPOSED_OBJ_PREFIX),
                                name='webchannel_init',
                                injection_point=QWebEngineScript.DocumentCreation)
             else:
@@ -123,7 +120,7 @@ if HAVE_WEBENGINE:
 
             self._onloadJS(';window.__load_finished = true;',
                            name='load_finished',
-                           injection_point=QWebEngineScript.DocumentReady)
+                           injection_point=QWebEngineScript.Deferred)
 
             channel = QWebChannel(self)
             if bridge is not None:
